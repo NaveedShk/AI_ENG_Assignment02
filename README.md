@@ -3,6 +3,15 @@
 **Question:** is a model that decides in milliseconds more useful than a frontier LLM that plans longer,
 if the slower model solves the task in fewer moves?
 
+## Demo videos
+
+| Part | Video |
+|---|---|
+| 1. Live benchmark run: models playing, then completed | [youtu.be/7ZXCh6GfIPY](https://youtu.be/7ZXCh6GfIPY) |
+| 2. Statistical benchmark slide | [youtu.be/oGtZvoUYuPo](https://youtu.be/oGtZvoUYuPo) |
+
+Student name and roll number (Sheikh Naveed Azeemi, 23K-0003) are on screen throughout both videos.
+
 **Results of the submitted runs, answers to the five questions, and deviations from the brief: see [RESULTS.md](RESULTS.md).**
 
 This app benchmarks four OpenRouter models on the same scrambled 3×3 cubes:
