@@ -20,10 +20,18 @@ import httpx
 from . import config
 from .adapters import build_adapters
 from .cube import SOLVED, apply_move, apply_moves, faces, is_solved, random_scramble
-from .solver import shortest_solution
+from .solver import distance, shortest_solution
 from .stats import make_report, summarize
 
 EXTENSION_SEARCH_DEPTH = 8
+FINAL_DISTANCE_DEPTH = 8
+
+
+def add_final_distances(run: dict) -> None:
+    """Exact distance to solved at the end of each trial (None = more than 8 moves away)."""
+    for t in run["trials"]:
+        if "final_distance" not in t:
+            t["final_distance"] = distance(t["state"], FINAL_DISTANCE_DEPTH)
 
 
 def make_puzzles(sets, seed: int) -> list[dict]:
@@ -71,8 +79,9 @@ class Budget:
 
 class Run:
     def __init__(self, profile: str, seed: int | None = None, max_calls: int | None = None,
-                 move_limit: int | None = None):
+                 move_limit: int | None = None, models: list[str] | None = None, label: str | None = None):
         prof = config.PROFILES[profile]
+        self.models = [m for m in config.MODELS if not models or m["key"] in models]
         self.live = prof["live"]
         self.seed = config.SEED if seed is None else seed
         self.move_limit = move_limit or config.MOVE_LIMIT
@@ -83,9 +92,9 @@ class Run:
         self.sem = asyncio.Semaphore(config.CONCURRENCY)
         puzzles = make_puzzles(prof["sets"], self.seed)
         self.data = {
-            "id": datetime.now().strftime("%Y%m%d_%H%M%S") + f"_{profile}",
+            "id": datetime.now().strftime("%Y%m%d_%H%M%S") + f"_{profile}" + ("_" + "-".join(models) if models else ""),
             "profile": profile,
-            "profile_label": prof["label"],
+            "profile_label": label or prof["label"],
             "live": self.live,
             "status": "running",
             "started_at": datetime.now().isoformat(timespec="seconds"),
@@ -99,11 +108,12 @@ class Run:
                 "history_len": config.HISTORY_LEN,
                 "metric": "HTM (18 moves)",
                 "seed": self.seed,
+                "llm_reasoning_effort": config.OPUS_REASONING_EFFORT,
                 "invalid_policy": "invalid or failed response = wasted turn (counts toward move limit, cube unchanged)",
             },
             "calls_used": 0,
             "round": 0,
-            "models": [{k: m[k] for k in ("key", "name", "category", "id", "api")} for m in config.MODELS],
+            "models": [{k: m[k] for k in ("key", "name", "category", "id", "api")} for m in self.models],
             "puzzles": puzzles,
             "trials": [],
             "log": [],
@@ -111,7 +121,7 @@ class Run:
             "summary": None,
         }
         for p in puzzles:
-            for m in config.MODELS:
+            for m in self.models:
                 self.data["trials"].append({
                     "id": f"{p['id']}-{m['key']}",
                     "puzzle_id": p["id"],
@@ -231,7 +241,7 @@ class Run:
             self.data["error"] = "OPENROUTER_API_KEY is not set in .env"
             self.data["status"] = "aborted"
             return self.save()
-        self._log(f"run {self.data['id']}: {len(self.data['puzzles'])} puzzles x {len(config.MODELS)} models, "
+        self._log(f"run {self.data['id']}: {len(self.data['puzzles'])} puzzles x {len(self.models)} models, "
                   f"budget={self.budget.limit}, move_limit={self.move_limit}")
         client = httpx.AsyncClient() if self.live else None
         adapters = build_adapters(self.live, client, self.seed)
@@ -278,6 +288,7 @@ class Run:
     def save(self) -> dict:
         self.data["finished_at"] = datetime.now().isoformat(timespec="seconds")
         self.data["calls_used"] = self.budget.used
+        add_final_distances(self.data)
         self.data["summary"] = summarize(self.data)
         config.RESULTS_DIR.mkdir(exist_ok=True)
         base = config.RESULTS_DIR / f"run_{self.data['id']}"

@@ -1,0 +1,510 @@
+{
+ "id": "20261025_133421_budget_opus",
+ "profile": "budget",
+ "profile_label": "LLM-only rerun: Claude Haiku 5.5 with HIGH thinking effort, same 2 puzzles, 10-turn limit, cap 20 calls",
+ "live": true,
+ "status": "finished",
+ "started_at": "2026-10-25T13:34:21",
+ "finished_at": "2026-10-25T13:38:18",
+ "student": {
+  "name": "Sheikh Naveed Azeemi",
+  "roll": "23K-0003"
+ },
+ "policy": {
+  "move_limit": 10,
+  "max_calls": 20,
+  "timeout_s": 180.0,
+  "retries": 0,
+  "history_len": 6,
+  "metric": "HTM (18 moves)",
+  "seed": 2026,
+  "llm_reasoning_effort": "high",
+  "invalid_policy": "invalid or failed response = wasted turn (counts toward move limit, cube unchanged)"
+ },
+ "calls_used": 20,
+ "round": 10,
+ "models": [
+  {
+   "key": "opus",
+   "name": "Claude Haiku 5.5 (Opus 5.5 stand-in)",
+   "category": "LLM via chat completions",
+   "id": "anthropic/claude-haiku-5.5",
+   "api": "chat"
+  }
+ ],
+ "puzzles": [
+  {
+   "id": "P1",
+   "set": "primary",
+   "scramble": [
+    "D'",
+    "B'",
+    "R",
+    "F'"
+   ],
+   "state": "FLFUUFBBUBRRDRRDUUDDRFFRFFRLLFDDBBRBDLRDLUDFUUBLUBLLBL",
+   "optimal": 4,
+   "optimal_solution": [
+    "F",
+    "R'",
+    "B",
+    "D"
+   ],
+   "upper_bound": 4
+  },
+  {
+   "id": "P2",
+   "set": "primary",
+   "scramble": [
+    "B2",
+    "L2",
+    "F'",
+    "U"
+   ],
+   "state": "RDDRUDRUDBBFDRLDRLDRLFFFBBBRRRUDDUUUFFFLLULLULLUBBFBBF",
+   "optimal": 4,
+   "optimal_solution": [
+    "U'",
+    "F",
+    "L2",
+    "B2"
+   ],
+   "upper_bound": 4
+  }
+ ],
+ "trials": [
+  {
+   "id": "P1-opus",
+   "puzzle_id": "P1",
+   "model_key": "opus",
+   "status": "limit",
+   "state": "FLFUUFBBUBRRDRRDUUDDRFFRFFRLLFDDBBRBDLRDLUDFUUBLUBLLBL",
+   "moves": [
+    "U",
+    "U'",
+    "R",
+    "R'",
+    "F",
+    "F'",
+    "U'",
+    "U2",
+    "U2",
+    "U"
+   ],
+   "turns": 10,
+   "invalid": 0,
+   "retries": 0,
+   "steps": [
+    {
+     "turn": 1,
+     "move": "U",
+     "valid": true,
+     "latency_s": 6.6442,
+     "engine_s": 1e-05,
+     "t_start": 0.523,
+     "t_end": 7.167,
+     "attempts": 1,
+     "confidence": null,
+     "probabilities": null,
+     "error": null,
+     "raw": "{\"move\": \"U\"}",
+     "state_after": "BUFBULUFFUBLDRRDUUBRRFFRFFRLLFDDBBRBDDRDLUDFUDLRUBLLBL"
+    },
+    {
+     "turn": 2,
+     "move": "U'",
+     "valid": true,
+     "latency_s": 23.1665,
+     "engine_s": 9e-06,
+     "t_start": 49.473,
+     "t_end": 72.639,
+     "attempts": 1,
+     "confidence": null,
+     "probabilities": null,
+     "error": null,
+     "raw": "{\"move\": \"U'\"}",
+     "state_after": "FLFUUFBBUBRRDRRDUUDDRFFRFFRLLFDDBBRBDLRDLUDFUUBLUBLLBL"
+    },
+    {
+     "turn": 3,
+     "move": "R",
+     "valid": true,
+     "latency_s": 4.6883,
+     "engine_s": 1e-05,
+     "t_start": 72.639,
+     "t_end": 77.327,
+     "attempts": 1,
+     "confidence": null,
+     "probabilities": null,
+     "error": null,
+     "raw": "{\"move\": \"R\"}",
+     "state_after": "FLRUURBBRDDBURRURRDDFFFBFFBLLLDDUBRUDLRDLUDFUUBLFBLFBL"
+    },
+    {
+     "turn": 4,
+     "move": "R'",
+     "valid": true,
+     "latency_s": 6.2374,
+     "engine_s": 9e-06,
+     "t_start": 83.588,
+     "t_end": 89.825,
+     "attempts": 1,
+     "confidence": null,
+     "probabilities": null,
+     "error": null,
+     "raw": "{\"move\": \"R'\"}",
+     "state_after": "FLFUUFBBUBRRDRRDUUDDRFFRFFRLLFDDBBRBDLRDLUDFUUBLUBLLBL"
+    },
+    {
+     "turn": 5,
+     "move": "F",
+     "valid": true,
+     "latency_s": 5.04,
+     "engine_s": 9e-06,
+     "t_start": 93.648,
+     "t_end": 98.689,
+     "attempts": 1,
+     "confidence": null,
+     "probabilities": null,
+     "error": null,
+     "raw": "{\"move\": \"F\"}",
+     "state_after": "FLFUUFUURBRRBRRUUUFFDFFDRRRDDBDDBBRBDLLDLLDFFUBLUBLLBL"
+    },
+    {
+     "turn": 6,
+     "move": "F'",
+     "valid": true,
+     "latency_s": 6.2593,
+     "engine_s": 9e-06,
+     "t_start": 99.564,
+     "t_end": 105.823,
+     "attempts": 1,
+     "confidence": null,
+     "probabilities": null,
+     "error": null,
+     "raw": "{\"move\": \"F'\"}",
+     "state_after": "FLFUUFBBUBRRDRRDUUDDRFFRFFRLLFDDBBRBDLRDLUDFUUBLUBLLBL"
+    },
+    {
+     "turn": 7,
+     "move": "U'",
+     "valid": true,
+     "latency_s": 16.1087,
+     "engine_s": 9e-06,
+     "t_start": 106.362,
+     "t_end": 122.471,
+     "attempts": 1,
+     "confidence": null,
+     "probabilities": null,
+     "error": null,
+     "raw": "{\"move\": \"U'\"}",
+     "state_after": "FFULUBFUBDDRDRRDUUDLRFFRFFRLLFDDBBRBUBLDLUDFUBRRUBLLBL"
+    },
+    {
+     "turn": 8,
+     "move": "U2",
+     "valid": true,
+     "latency_s": 11.311,
+     "engine_s": 9e-06,
+     "t_start": 122.471,
+     "t_end": 133.782,
+     "attempts": 1,
+     "confidence": null,
+     "probabilities": null,
+     "error": null,
+     "raw": "{\"move\": \"U2\"}",
+     "state_after": "BUFBULUFFUBLDRRDUUBRRFFRFFRLLFDDBBRBDDRDLUDFUDLRUBLLBL"
+    },
+    {
+     "turn": 9,
+     "move": "U2",
+     "valid": true,
+     "latency_s": 23.6422,
+     "engine_s": 1e-05,
+     "t_start": 162.133,
+     "t_end": 185.775,
+     "attempts": 1,
+     "confidence": null,
+     "probabilities": null,
+     "error": null,
+     "raw": "{\"move\": \"U2\"}",
+     "state_after": "FFULUBFUBDDRDRRDUUDLRFFRFFRLLFDDBBRBUBLDLUDFUBRRUBLLBL"
+    },
+    {
+     "turn": 10,
+     "move": "U",
+     "valid": true,
+     "latency_s": 11.4948,
+     "engine_s": 9e-06,
+     "t_start": 194.256,
+     "t_end": 205.751,
+     "attempts": 1,
+     "confidence": null,
+     "probabilities": null,
+     "error": null,
+     "raw": "{\"move\": \"U\"}",
+     "state_after": "FLFUUFBBUBRRDRRDUUDDRFFRFFRLLFDDBBRBDLRDLUDFUUBLUBLLBL"
+    }
+   ],
+   "model_time_s": 114.59240590000991,
+   "engine_time_s": 9.310012683272362e-05,
+   "total_time_s": 114.59249900013674,
+   "cost_usd": 0.0103134,
+   "current_move": null,
+   "final_distance": 4
+  },
+  {
+   "id": "P2-opus",
+   "puzzle_id": "P2",
+   "model_key": "opus",
+   "status": "limit",
+   "state": "RDBRUBRULFLLBRRBDDDRDFFDBBDRRLUDFUUBFFFLLULLUULUDBFRBF",
+   "moves": [
+    "U",
+    "U'",
+    "R",
+    "R'",
+    "F",
+    "F'",
+    "R'"
+   ],
+   "turns": 10,
+   "invalid": 3,
+   "retries": 0,
+   "steps": [
+    {
+     "turn": 1,
+     "move": null,
+     "valid": false,
+     "latency_s": 42.3052,
+     "engine_s": 2e-05,
+     "t_start": 7.167,
+     "t_end": 49.472,
+     "attempts": 1,
+     "confidence": null,
+     "probabilities": null,
+     "error": "malformed: 'None'",
+     "raw": "None",
+     "state_after": "RDDRUDRUDBBFDRLDRLDRLFFFBBBRRRUDDUUUFFFLLULLULLUBBFBBF"
+    },
+    {
+     "turn": 2,
+     "move": "U",
+     "valid": true,
+     "latency_s": 6.8106,
+     "engine_s": 1e-05,
+     "t_start": 49.475,
+     "t_end": 56.285,
+     "attempts": 1,
+     "confidence": null,
+     "probabilities": null,
+     "error": null,
+     "raw": "{\"move\": \"U\"}",
+     "state_after": "RRRUUDDDDLLUDRLDRLBBFFFFBBBRRRUDDUUUDRLLLULLUFFFBBFBBF"
+    },
+    {
+     "turn": 3,
+     "move": "U'",
+     "valid": true,
+     "latency_s": 10.9459,
+     "engine_s": 9e-06,
+     "t_start": 72.642,
+     "t_end": 83.588,
+     "attempts": 1,
+     "confidence": null,
+     "probabilities": null,
+     "error": null,
+     "raw": "{\"move\": \"U'\"}",
+     "state_after": "RDDRUDRUDBBFDRLDRLDRLFFFBBBRRRUDDUUUFFFLLULLULLUBBFBBF"
+    },
+    {
+     "turn": 4,
+     "move": "R",
+     "valid": true,
+     "latency_s": 10.0587,
+     "engine_s": 9e-06,
+     "t_start": 83.59,
+     "t_end": 93.648,
+     "attempts": 1,
+     "confidence": null,
+     "probabilities": null,
+     "error": null,
+     "raw": "{\"move\": \"R\"}",
+     "state_after": "RDLRUFRUBDDBRRBLLFDRRFFDBBURRBUDBUULFFFLLULLUDLUDBFDBF"
+    },
+    {
+     "turn": 5,
+     "move": "R'",
+     "valid": true,
+     "latency_s": 5.9125,
+     "engine_s": 9e-06,
+     "t_start": 93.651,
+     "t_end": 99.564,
+     "attempts": 1,
+     "confidence": null,
+     "probabilities": null,
+     "error": null,
+     "raw": "{\"move\": \"R'\"}",
+     "state_after": "RDDRUDRUDBBFDRLDRLDRLFFFBBBRRRUDDUUUFFFLLULLULLUBBFBBF"
+    },
+    {
+     "turn": 6,
+     "move": "F",
+     "valid": true,
+     "latency_s": 6.796,
+     "engine_s": 9e-06,
+     "t_start": 99.566,
+     "t_end": 106.362,
+     "attempts": 1,
+     "confidence": null,
+     "probabilities": null,
+     "error": null,
+     "raw": "{\"move\": \"F\"}",
+     "state_after": "RDDRUDUUFRBFURLDRLBFDBFRBFLDDBUDDUUUFFRLLRLLRLLUBBFBBF"
+    },
+    {
+     "turn": 7,
+     "move": "F'",
+     "valid": true,
+     "latency_s": 8.3613,
+     "engine_s": 9e-06,
+     "t_start": 106.364,
+     "t_end": 114.725,
+     "attempts": 1,
+     "confidence": null,
+     "probabilities": null,
+     "error": null,
+     "raw": "{\"move\": \"F'\"}",
+     "state_after": "RDDRUDRUDBBFDRLDRLDRLFFFBBBRRRUDDUUUFFFLLULLULLUBBFBBF"
+    },
+    {
+     "turn": 8,
+     "move": null,
+     "valid": false,
+     "latency_s": 39.6593,
+     "engine_s": 2e-05,
+     "t_start": 122.473,
+     "t_end": 162.132,
+     "attempts": 1,
+     "confidence": null,
+     "probabilities": null,
+     "error": "malformed: 'None'",
+     "raw": "None",
+     "state_after": "RDDRUDRUDBBFDRLDRLDRLFFFBBBRRRUDDUUUFFFLLULLULLUBBFBBF"
+    },
+    {
+     "turn": 9,
+     "move": "R'",
+     "valid": true,
+     "latency_s": 32.1211,
+     "engine_s": 9e-06,
+     "t_start": 162.135,
+     "t_end": 194.256,
+     "attempts": 1,
+     "confidence": null,
+     "probabilities": null,
+     "error": null,
+     "raw": "{\"move\": \"R'\"}",
+     "state_after": "RDBRUBRULFLLBRRBDDDRDFFDBBDRRLUDFUUBFFFLLULLUULUDBFRBF"
+    },
+    {
+     "turn": 10,
+     "move": null,
+     "valid": false,
+     "latency_s": 42.3703,
+     "engine_s": 1.8e-05,
+     "t_start": 194.258,
+     "t_end": 236.628,
+     "attempts": 1,
+     "confidence": null,
+     "probabilities": null,
+     "error": "malformed: 'None'",
+     "raw": "None",
+     "state_after": "RDBRUBRULFLLBRRBDDDRDFFDBBDRRLUDFUUBFFFLLULLUULUDBFRBF"
+    }
+   ],
+   "model_time_s": 205.3408401000779,
+   "engine_time_s": 0.00012189976405352354,
+   "total_time_s": 205.34096199984197,
+   "cost_usd": 0.019483399999999998,
+   "current_move": null,
+   "final_distance": 5
+  }
+ ],
+ "log": [
+  "[    0.0s] run 20261025_133421_budget_opus: 2 puzzles x 1 models, budget=20, move_limit=10",
+  "[  49.47s] P2-opus: invalid/failed response (malformed: 'None')",
+  "[ 162.13s] P2-opus: invalid/failed response (malformed: 'None')",
+  "[ 236.63s] P2-opus: invalid/failed response (malformed: 'None')",
+  "[ 236.63s] run finished: 20 API calls used"
+ ],
+ "error": null,
+ "summary": {
+  "models": [
+   {
+    "key": "opus",
+    "name": "Claude Haiku 5.5 (Opus 5.5 stand-in)",
+    "category": "LLM via chat completions",
+    "trials": 2,
+    "solved": 0,
+    "success_rate": 0.0,
+    "avg_latency_s": 15.997,
+    "median_latency_s": 10.502,
+    "avg_total_time_s": 159.967,
+    "sum_total_time_s": 319.933,
+    "total_moves": 17,
+    "avg_moves": 8.5,
+    "avg_moves_solved": null,
+    "avg_gap": null,
+    "zero_gap_solves": 0,
+    "gaps": [],
+    "avg_final_distance": 4.5,
+    "final_beyond_8": 0,
+    "avg_progress": -0.5,
+    "invalid": 3,
+    "retries": 0,
+    "calls": 20,
+    "cost_usd": 0.0298
+   }
+  ],
+  "puzzles": [
+   {
+    "id": "P1",
+    "set": "primary",
+    "scramble": "D' B' R F'",
+    "optimal": 4,
+    "results": {
+     "opus": {
+      "status": "limit",
+      "moves": 10,
+      "turns": 10,
+      "gap": null,
+      "final_distance": 4
+     }
+    }
+   },
+   {
+    "id": "P2",
+    "set": "primary",
+    "scramble": "B2 L2 F' U",
+    "optimal": 4,
+    "results": {
+     "opus": {
+      "status": "limit",
+      "moves": 7,
+      "turns": 10,
+      "gap": null,
+      "final_distance": 5
+     }
+    }
+   }
+  ],
+  "answers": {
+   "q1": "Claude Haiku 5.5 (Opus 5.5 stand-in) was fastest, averaging 15.997 s per move decision. (Only one model in this run.)",
+   "q2": "No model solved a puzzle within its turn limit (0%).",
+   "q3": "No model solved a puzzle, so no optimality gap can be computed. Measured instead as progress (start distance minus final distance to solved): Claude Haiku 5.5 (Opus 5.5 stand-in) did best with -0.5 moves on average (negative means the cube ended further from solved).",
+   "q4": "Not applicable - only one model in this run.",
+   "q5": "Not applicable for a single-model run - see the main four-model run."
+  }
+ }
+}

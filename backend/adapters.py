@@ -35,6 +35,14 @@ INSTRUCTIONS = (
     "progress toward the solved cube, aiming to solve it in as few moves as possible. "
     + STATE_FORMAT
 )
+# Decision models get the request format from the assignment brief: short instructions and a
+# state of {cube_facelets, recent_moves}. GPT-6 Luna Decisions refuses ("OpenAI refused to
+# answer") when sent the long instructions above, so all three decision models use this
+# identical, shorter contract. Option keys avoid the apostrophe (U_prime) and map back to U'.
+DECISION_INSTRUCTIONS = "Choose the single next move most likely to progress toward the solved cube."
+DECISION_KEYS = {m: m.replace("'", "_prime") for m in MOVE_NAMES}
+DECISION_MOVES = {k: m for m, k in DECISION_KEYS.items()}
+DECISION_CRITERIA = {DECISION_KEYS[m]: d for m, d in MOVE_DESCRIPTIONS.items()}
 CHAT_SYSTEM = (
     INSTRUCTIONS
     + " Allowed moves: " + ", ".join(MOVE_NAMES) + "."
@@ -55,7 +63,8 @@ def _result(**kw) -> Result:
 
 def _http_error(resp: httpx.Response) -> Result:
     code = resp.status_code
-    kind = "fatal_run" if code in (401, 402) else "fatal_model" if code in (400, 403, 404) else "transient"
+    # 402 (credit) disables only the model that hit it: cheap models may still be affordable.
+    kind = "fatal_run" if code == 401 else "fatal_model" if code in (400, 402, 403, 404) else "transient"
     return _result(error=f"HTTP {code}: {resp.text[:300]}", error_kind=kind, raw=resp.text[:500])
 
 
@@ -83,12 +92,12 @@ class DecisionAdapter(_LiveAdapter):
     async def choose(self, state: dict) -> Result:
         body = {
             "model": self.model["id"],
-            "state": state,
+            "state": {"cube_facelets": state["cube_facelets"], "recent_moves": state["recent_moves"]},
             "questions": {
                 "next_move": {
                     "type": "choice",
-                    "instructions": INSTRUCTIONS,
-                    "criteria": MOVE_DESCRIPTIONS,
+                    "instructions": DECISION_INSTRUCTIONS,
+                    "criteria": DECISION_CRITERIA,
                 }
             },
         }
@@ -103,11 +112,17 @@ class DecisionAdapter(_LiveAdapter):
         except (ValueError, KeyError, TypeError):
             return _result(error="malformed: no answers.next_move", error_kind="malformed", raw=resp.text[:500])
         cost = (data.get("usage") or {}).get("cost")
-        if ans.get("type") != "choice" or not is_valid_move(ans.get("choice")):
+        if not isinstance(ans, dict):
+            return _result(error="malformed: answer is not an object", error_kind="malformed", raw=resp.text[:500])
+        move = DECISION_MOVES.get(ans.get("choice"))
+        if ans.get("type") != "choice" or not is_valid_move(move):
             return _result(error=f"malformed: invalid choice {ans.get('choice')!r}", error_kind="malformed",
                            raw=json.dumps(ans)[:500], cost=cost)
-        return _result(move=ans["choice"], confidence=ans.get("confidence"),
-                       probabilities=ans.get("probabilities"), cost=cost, raw=json.dumps(ans)[:500])
+        probs = ans.get("probabilities")
+        if isinstance(probs, dict):
+            probs = {DECISION_MOVES.get(k, k): v for k, v in probs.items()}
+        return _result(move=move, confidence=ans.get("confidence"),
+                       probabilities=probs, cost=cost, raw=json.dumps(ans)[:500])
 
 
 class ChatAdapter(_LiveAdapter):

@@ -104,14 +104,16 @@ function dashboardHTML(data) {
       <td>${m.total_moves}<div class="muted">avg ${fmt(m.avg_moves, 1)} / puzzle</div></td>
       <td>${fmt(m.success_rate, 1, "%")}<div class="muted">${m.solved}/${m.trials} solved</div></td>
       <td>${fmt(m.avg_gap, 2)}<div class="muted">${m.zero_gap_solves} optimal solves</div></td>
+      <td>${m.avg_progress == null ? "-" : (m.avg_progress > 0 ? "+" : "") + Number(m.avg_progress).toFixed(2)}<div class="muted">moves closer to solved</div></td>
       <td>${m.invalid}</td><td>${m.calls}</td><td>${m.cost_usd ? "$" + m.cost_usd.toFixed(4) : "-"}</td>
     </tr>`).join("");
   const a = data.summary.answers;
   return `<table>
       <thead><tr><th>Model</th><th>Avg latency / move</th><th>Total solve time / puzzle</th><th>Total moves</th>
-      <th>Success rate</th><th>Optimality gap</th><th>Invalid</th><th>Calls</th><th>Cost</th></tr></thead>
+      <th>Success rate</th><th>Optimality gap</th><th>Progress</th><th>Invalid</th><th>Calls</th><th>Cost</th></tr></thead>
       <tbody>${rows}</tbody></table>
     <p class="muted">Optimality gap = model moves &minus; exact shortest moves (bidirectional BFS, half-turn metric), solved puzzles only.
+      Progress = exact distance to solved at start minus at end (positive = closer).
       Move limit ${data.policy.move_limit}; reaching it counts as unsolved. ${esc(data.policy.invalid_policy)}.</p>
     <div class="charts">
       ${barChart("Avg latency per move", ms, "avg_latency_s", " s", 3, false)}

@@ -20,8 +20,12 @@ def main():
     ap.add_argument("--seed", type=int)
     ap.add_argument("--max-calls", type=int)
     ap.add_argument("--move-limit", type=int)
+    ap.add_argument("--models", nargs="+", choices=[m["key"] for m in config.MODELS],
+                    help="play only these models, e.g. --models opus")
+    ap.add_argument("--label", help="description saved with the run")
     a = ap.parse_args()
-    run = Run(a.profile, seed=a.seed, max_calls=a.max_calls, move_limit=a.move_limit)
+    run = Run(a.profile, seed=a.seed, max_calls=a.max_calls, move_limit=a.move_limit,
+              models=a.models, label=a.label)
     data = asyncio.run(run.execute())
     print(make_report(data))
     print(f"\nSaved results/run_{data['id']}.json and .md")

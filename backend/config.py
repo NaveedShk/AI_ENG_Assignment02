@@ -39,7 +39,8 @@ MODELS = [
      "id": os.getenv("MODEL_LUNA", "openai/gpt-6-luna-decisions"), "api": "decisions"},
     {"key": "clef", "name": "Cloudflare Clef", "category": "System-1 decision model",
      "id": os.getenv("MODEL_CLEF", "cloudflare/clef"), "api": "decisions"},
-    {"key": "opus", "name": "Claude Opus 5.5", "category": "Frontier LLM",
+    {"key": "opus", "name": os.getenv("MODEL_OPUS_NAME", "Claude Opus 5.5"),
+     "category": os.getenv("MODEL_OPUS_CATEGORY", "Frontier LLM"),
      "id": os.getenv("MODEL_OPUS", "anthropic/claude-opus-5.5"), "api": "chat"},
 ]
 
@@ -63,7 +64,7 @@ PROFILES = {
         "max_calls": None,
     },
     "budget": {
-        "label": f"Budget (3 primary puzzles, hard cap {MAX_CALLS} calls)",
+        "label": f"Budget ({_int('BUDGET_PUZZLES', 3)} primary puzzles, hard cap {MAX_CALLS} calls)",
         "live": True,
         "sets": [("primary", _int("BUDGET_PUZZLES", 3), 4, 4)],
         "max_calls": MAX_CALLS,

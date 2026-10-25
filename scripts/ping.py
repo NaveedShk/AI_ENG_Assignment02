@@ -36,7 +36,7 @@ async def main(keys):
             if res["error"]:
                 print("      error:", res["error"])
                 print("      raw:  ", (res["raw"] or "")[:300])
-    print("\nExpected best first move: U' (then R'). 4 calls used.")
+    print(f"\nExpected best first move: U' (then R'). {len(keys)} call(s) used.")
 
 
 if __name__ == "__main__":

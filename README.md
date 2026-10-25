@@ -3,6 +3,8 @@
 **Question:** is a model that decides in milliseconds more useful than a frontier LLM that plans longer,
 if the slower model solves the task in fewer moves?
 
+**Results of the submitted runs, answers to the five questions, and deviations from the brief: see [RESULTS.md](RESULTS.md).**
+
 This app benchmarks four OpenRouter models on the same scrambled 3×3 cubes:
 
 | Model | Category | OpenRouter id | Interface |
@@ -11,6 +13,12 @@ This app benchmarks four OpenRouter models on the same scrambled 3×3 cubes:
 | OpenAI GPT-6 Luna Decisions | System-1 decision model | `openai/gpt-6-luna-decisions` | Decisions API |
 | Cloudflare Clef | System-1 decision model | `cloudflare/clef` | Decisions API |
 | Claude Opus 5.5 | Frontier LLM | `anthropic/claude-opus-5.5` | Chat completions (JSON schema) |
+
+> **Budget substitution in the submitted run:** the recorded run uses **Claude Haiku 5.5** (`anthropic/claude-haiku-5.5`,
+> low thinking effort) in the frontier-LLM slot instead of Claude Opus 5.5. On OpenRouter, Opus 5.5 has mandatory
+> thinking and costs $4/$20 per million tokens, which did not fit the available prepaid credit. Haiku 5.5 costs
+> $0.10/$0.50, about 40× less. It goes through the same chat-completions adapter, prompt and JSON-schema contract.
+> To use Opus, set `MODEL_OPUS=anthropic/claude-opus-5.5` in `.env` and remove the `MODEL_OPUS_NAME`/`MODEL_OPUS_CATEGORY` overrides.
 
 The ids are set in `.env`, so you can update them without changing code. Click **Check models (free)** in the UI to confirm they are listed in OpenRouter's public catalog.
 
@@ -43,7 +51,11 @@ It must choose one **action** from the 18 half-turn-metric moves (`U U' U2 R R' 
 The engine validates the move, applies it, and checks whether all six faces are solved.
 
 * **Decision models:** `POST https://openrouter.ai/api/alpha/decisions` with a `choice` question named `next_move`.
-  The 18 moves are the criteria. The app reads `answers.next_move.choice` and records `confidence` and `probabilities`.
+  They all get the identical request from the assignment brief: state `{cube_facelets, recent_moves}`, the instruction
+  "Choose the single next move most likely to progress toward the solved cube.", and the 18 moves as criteria.
+  Option keys use `U_prime` instead of `U'`, mapped back to `U'`.
+  The app reads `answers.next_move.choice` and records `confidence` and `probabilities`.
+  GPT-6 Luna Decisions refused ("OpenAI refused to answer") when given a longer instruction that explained the facelet layout, so the shorter brief format is used for all three.
 * **Claude Opus 5.5:** `POST https://openrouter.ai/api/v1/chat/completions` with the same instructions and state.
   A strict `json_schema` response format (`{"move": <enum of 18 moves>}`) and `provider.require_parameters` are set.
 * **Validation:** a reply that isn't exactly one valid move is logged as *malformed* and counted. The app never converts it into a move.
@@ -101,29 +113,29 @@ Run the tests (offline):
 python -m pytest -q
 ```
 
-## Running on a small budget (≤ 68 API calls)
+## Running on a small budget
 
 | Step | What | Paid calls |
 |---|---|---|
 | 1 | **Mock** profile in the UI: full app with simulated models; practise the recording | 0 |
 | 2 | **Check models (free)** button: model ids against the public catalog | 0 |
 | 3 | `python -m scripts.ping`: one real call per model to verify each adapter | 4 |
-| 4 | **Budget** profile: 3 primary puzzles (4 moves deep) × 4 models, hard cap `MAX_CALLS=64` | ≤ 64 |
+| 4 | **Budget** profile: `BUDGET_PUZZLES` primary puzzles (4 moves deep) × 4 models, hard cap `MAX_CALLS` (the submitted run used 2 puzzles and a cap of 57) | ≤ `MAX_CALLS` |
 | 5 | **Replay (0 calls)** / **Show results** / **Benchmark slide** for re-takes of the video | 0 |
 
 Ways the budget is protected:
 
 * `MAX_CALLS` is a hard cap. Every HTTP attempt counts, including retries.
 * Round 1 sends one probe call per model first. A wrong id or schema (HTTP 400/403/404) disables that model after one call instead of one per puzzle.
-* HTTP 401 or 402 (bad key, no credits) stops the whole run immediately.
+* HTTP 401 (bad key) stops the whole run immediately. HTTP 402 (out of credit) disables only the model that hit it, so cheaper models can finish.
 * `RETRIES=0` by default.
 * Solved trials stop calling, so their unused budget goes to the remaining trials as extra rounds.
 
-With 3 puzzles each trial is guaranteed at least 5 turns. Set `BUDGET_PUZZLES=2` to guarantee at least 8 turns each, but with fewer puzzles.
+Each unsolved trial is guaranteed at least `MAX_CALLS ÷ (puzzles × 4)` turns, rounded down. For example, 2 puzzles with a cap of 57 gives at least 7 turns each.
 The **Full** profile follows the complete recommended protocol: 2 warm-up, 5 primary and 2 extension puzzles. It can take about 1000 calls.
 
-> Note for the report: the budget profile uses 12 model-puzzle trials, not the recommended 20. Trials that end with
-> **BUDGET STOP** count as unsolved after the turns shown, alongside trials that hit the 30-move limit.
+> The budget profile runs fewer than the recommended 20 trials. Trials that end with **BUDGET STOP** count as unsolved
+> after the turns shown. See [RESULTS.md](RESULTS.md) for the deviations in the submitted run.
 
 ## Screen recording checklist
 
@@ -144,4 +156,5 @@ tests/     test_cube.py
 results/   run_*.json (full logs) and run_*.md (report)   [git-ignored]
 ```
 
-Headless alternative to the UI: `python -m scripts.run_cli budget` (or `mock`).
+Headless alternative to the UI: `python -m scripts.run_cli budget` (or `mock`). Add `--models opus --move-limit 10` to run a subset.
+Recompute a saved run's statistics offline: `python -m scripts.rebuild_report results/run_<id>.json`.
