@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rubik's Cube Race</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo" aria-hidden="true"></span>
+      <div>
+        <h1>Rubik's Cube Race</h1>
+        <p class="sub">Fast decision models vs. a frontier LLM &middot; OpenRouter</p>
+      </div>
+    </div>
+    <div class="student" id="student">
+      <span class="label">Student</span> <strong id="studentName">-</strong>
+      <span class="sep">|</span>
+      <span class="label">Roll No</span> <strong id="studentRoll">-</strong>
+    </div>
+    <div class="meters">
+      <span class="badge" id="modeBadge">IDLE</span>
+      <span class="calls" id="callsMeter">API calls: 0</span>
+    </div>
+  </header>
+
+  <section class="controls">
+    <div class="group">
+      <label for="profile">Benchmark</label>
+      <select id="profile"></select>
+      <button id="runBtn" class="primary">Run benchmark</button>
+      <button id="stopBtn">Stop</button>
+      <button id="preflightBtn" title="Checks model ids in the public OpenRouter catalog - no paid calls">Check models (free)</button>
+    </div>
+    <div class="group">
+      <label for="savedRuns">Saved runs</label>
+      <select id="savedRuns"></select>
+      <select id="speed" title="Replay speed">
+        <option value="1">1x</option><option value="2" selected>2x</option>
+        <option value="5">5x</option><option value="20">20x</option>
+      </select>
+      <button id="replayBtn">Replay (0 calls)</button>
+      <button id="loadBtn">Show results</button>
+      <button id="slideBtn" class="accent">Benchmark slide</button>
+    </div>
+    <p class="hint" id="hint"></p>
+  </section>
+
+  <main>
+    <section id="statusBar" class="statusbar"></section>
+    <section id="puzzles"></section>
+
+    <section class="panel">
+      <h2>Statistical benchmark</h2>
+      <div id="dashboard"><p class="muted">Run or load a benchmark to see results.</p></div>
+    </section>
+
+    <details class="panel">
+      <summary>Run log (invalid outputs, retries, errors)</summary>
+      <pre id="log"></pre>
+    </details>
+  </main>
+
+  <div id="slide" class="slide" hidden>
+    <div class="slide-inner">
+      <div class="slide-head">
+        <div>
+          <h2>Statistical Benchmark &mdash; Rubik's Cube Race</h2>
+          <p id="slideMeta" class="muted"></p>
+        </div>
+        <div class="student big" id="slideStudent"></div>
+        <button id="closeSlide" aria-label="Close slide">&times;</button>
+      </div>
+      <div id="slideBody"></div>
+    </div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
