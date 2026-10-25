@@ -49,13 +49,40 @@ The 3 invalid replies were empty: the model used its whole 8,000-token budget th
 * **Reliability:** GPT-6 Luna Decisions refused to answer on every turn of puzzle 2 ("OpenAI refused to answer"). Those turns were logged as invalid, not converted into moves.
 * **More thinking did not help here:** going from low to high effort made each move about 6× slower, gave the same 0% solve rate, and caused 3 empty replies.
 
-## Answers to the five questions (draft — rewrite in your own words)
+## Answers to the five questions
 
 1. **Fastest decisions:** Jev 1.13, at 0.62 s per move. Luna (0.65 s) and Clef (0.99 s) were close; the LLM was 2.8–16 s.
 2. **Highest solve rate:** none. All four models scored 0% within their turn limits.
 3. **Shortest solutions / closeness to optimum:** no model solved a puzzle, so no optimality gap exists. Measured as progress toward solved, all models tied at −0.5. The best single game was Haiku on P1 and Clef on P2, each ending 3 moves from solved, one move closer than the start.
 4. **Did the fastest also have the best quality?** No. Speed bought nothing in quality here: the fastest model did no better than the slowest.
-5. **Which to use:** neither model type alone. Multi-step planning from a raw 54-character state is beyond both the fast decision models and this LLM. A practical agent would be a hybrid: a fast model for cheap, reversible choices, backed by explicit search or a verifier (like the BFS solver in this app) for planning.
+5. **Which would I use in a real-world application?** A **hybrid agent**. I would not use the fastest decision model alone, and the evidence does not justify the LLM alone either.
+
+   **Evidence against the fast decision model alone:**
+   * Speed was its only advantage: 0.6–1.0 s per move, with a 0% solve rate.
+   * Its choices were close to random. Clef's average confidence was 0.04–0.08, about the 1/18 ≈ 0.056 of a blind guess among 18 moves.
+   * Jev kept undoing its own previous move (`U U' U U' …`).
+   * Reliability was a problem too: GPT-6 Luna Decisions refused to answer 7 of its 14 turns.
+   * A fast agent that makes no progress, or does not answer, is not useful however fast it is.
+
+   **Evidence against the LLM alone:**
+   * It also scored 0%. With low thinking it was 3–4× slower than the decision models and ended no closer to solved.
+   * Raising thinking to high made each move about 6× slower again (16 s) and cost about 10× more per move.
+   * It still made no progress, and 3 of its 20 replies were empty because thinking used the whole token budget.
+   * In this experiment, more time spent "planning" did not buy better plans.
+
+   **What actually solved every puzzle:** the deterministic BFS search built into the app, which found the exact 4-move solution in milliseconds.
+
+   **The design I would use:** let a model handle the parts it is good at, and leave multi-step planning to an explicit planner, with every step checked by a verifier.
+   * **Fast decision model:** single-step choices that are cheap and reversible (routing, classification, picking the next action when the state is easy to read). It is 5–50× cheaper per call than the LLM here: about $0.00003 per move, vs $0.00016 for the LLM with low thinking and $0.0015 with high.
+   * **Search or solver:** the actual multi-step planning, where correctness matters.
+   * **Verifier:** measures progress, as this app's distance-to-solved does, and rejects or escalates a step when a model goes backwards or stalls.
+   * **Frontier LLM:** best kept for open-ended reasoning, explaining a plan, or fallback when nothing else applies. It should not take every per-step decision.
+
+   **Limits of this evidence:**
+   * 8 games, plus a 2-game rerun.
+   * Claude Haiku 5.5 stood in for Opus 5.5.
+   * 7–10 turns instead of 30.
+   * A full Opus run with the 30-move limit could change the LLM's numbers. Even so, the hybrid design would still be the safer choice, because it does not depend on any single model planning correctly.
 
 ## Deviations from the brief (budget constraints)
 
